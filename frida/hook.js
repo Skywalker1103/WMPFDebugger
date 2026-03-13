@@ -12,10 +12,10 @@ const patchResourceCachePolicy = (base, offset, version) => {
     // xref: WAPCAdapterAppIndex.js
     Interceptor.attach(base.add(offset), {
         onEnter(args) {
-            console.log(`[patch] lib cache policy ${offset} on enter`);
+            // console.log(`[patch] lib cache policy ${offset} on enter`);
         },
         onLeave(retval) {
-            console.log(`[patch] lib cache policy ${offset} onLeave with retval:`, retval.toInt32(), "; patch to 0x0");
+            // console.log(`[patch] lib cache policy ${offset} onLeave with retval:`, retval.toInt32(), "; patch to 0x0");
             retval.replace(0x0);
         }
     });
@@ -26,12 +26,12 @@ const patchCDPFilter = (base, offset, version) => {
     // xref: SendToClientFilter OR devtools_message_filter_applet_webview.cc
     Interceptor.attach(base.add(offset), {
         onEnter(args) {
-            !VERBOSE ? console.log(`[patch] patch CDP filter ${offset}`) : console.log(`[patch] CDP filter ${offset} on enter, original value of v216:`, args[0].readPointer());
+            // !VERBOSE ? console.log(`[patch] patch CDP filter ${offset}`) : console.log(`[patch] CDP filter ${offset} on enter, original value of v216:`, args[0].readPointer());
             this.v216 = args[0];
         },
         onLeave(retval) {
             const v216Value = this.v216.readPointer();
-            VERBOSE && console.log(`[patch] CDP filter ${offset} on leave, patch v216, now value:`, v216Value, "; *(v216 + 8) =", v216Value.add(8).readU32());
+            // VERBOSE && console.log(`[patch] CDP filter ${offset} on leave, patch v216, now value:`, v216Value, "; *(v216 + 8) =", v216Value.add(8).readU32());
             if (v216Value.add(8).readU32() == 6) {
                 v216Value.add(8).writeU32(0x0);
             }
@@ -84,7 +84,7 @@ const onLoadStartHook = (a1, a2, version) => {
     }
     const passArgs = a1.add(56).readPointer().add(structOffset[0]).readPointer();
     const passConditionPtr = passArgs.add(8).readPointer().add(structOffset[1]).readPointer().add(structOffset[2]).readPointer().add(structOffset[3]);
-    console.log("[hook] scene:", passConditionPtr.readInt());
+    // console.log("[hook] scene:", passConditionPtr.readInt());
 
     // 1000: from issue #83 <-- will crash the process
     // 1007: from issue #80
@@ -103,7 +103,7 @@ const onLoadStartHook = (a1, a2, version) => {
     if (!sceneNumberArray.includes(passConditionPtr.readInt())) {
         return;
     }
-    console.log("[hook] hook scene condition -> 1101");
+    // console.log("[hook] hook scene condition -> 1101");
     passConditionPtr.writeInt(1101);
 
     // TODO: customize debugging endpoint
@@ -116,7 +116,7 @@ const interceptor = (base, offset, version) => {
     // xref: AppletIndexContainer::OnLoadStart
     Interceptor.attach(base.add(offset), {
         onEnter(args) {
-            console.log("[inteceptor] AppletIndexContainer::OnLoadStart onEnter, indexContainer.this: ", this.context.rcx);
+            // console.log("[inteceptor] AppletIndexContainer::OnLoadStart onEnter, indexContainer.this: ", this.context.rcx);
             // write dl to 0x1
             if ((this.context.rdx & 0xFF) !== 1) {
                 this.context.rdx = (this.context.rdx & ~0xFF) | 0x1;

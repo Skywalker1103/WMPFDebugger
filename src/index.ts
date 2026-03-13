@@ -122,8 +122,8 @@ const debug_server = () => {
             try {
                 const decodedData = messageProto.mmbizwxadevremote.WARemoteDebug_DebugMessage.decode(message);
                 unwrappedData = codex.unwrapDebugMessageData(decodedData);
-                DEBUG && console.log("[client] [DEBUG] decoded data:");
-                DEBUG && console.dir(unwrappedData);
+                // DEBUG && console.log("[client] [DEBUG] decoded data:");
+                // DEBUG && console.dir(unwrappedData);
             } catch (e) {
                 console.error(`[client] err: ${e}`);
                 return;
